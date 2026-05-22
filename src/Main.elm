@@ -34,7 +34,7 @@ type alias Event =
 
 init : Model
 init =
-  { newId = -1, newTitle = "", events = [] }
+  { newId = 0, newTitle = "", events = [] }
 
 
 
@@ -43,7 +43,7 @@ init =
 
 type Msg
   = Add
-  --| Remove
+  | Remove Int
   | Decrement
   | Title String -- This effectively is function String -> Msg
 
@@ -52,14 +52,19 @@ update : Msg -> Model -> Model
 update msg model =
   case msg of
     Add ->
-      { newTitle = "", newId = model.newId + 1, events = model.newTitle :: model.events }
+      { newTitle = ""
+      , newId = model.newId + 1
+      , events = { id = model.newId, title = model.newTitle } :: model.events
+      }
+
+    Remove id ->
+      { model | events = List.filter (\e -> e.id /= id) model.events }
 
     Decrement ->
       { model | newId = model.newId - 1 }
 
     Title title ->
       { model | newTitle = title }
-
 
 
 -- VIEW
@@ -76,15 +81,14 @@ view model =
     ]
 
 
--- TODO: We could nest some stuff here, for example date and remove button
-titleView : String -> Html msg
-titleView title =
+titleView : Event -> Html Msg
+titleView event =
   div [ style "color" "green" ]
-    [ text title
-    --, button [ onClick Remove ] [ text "-" ]
+    [ text (String.fromInt event.id ++ ": " ++ event.title)
+    , button [ onClick (Remove event.id) ] [ text "-" ]
     ]
 
 
-titleViews : List String -> Html msg
+titleViews : List Event -> Html Msg
 titleViews events =
   ul [] (List.map titleView events)
