@@ -68,12 +68,21 @@ update msg model =
 
 
 -- VIEW
+-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
 
+waterCss : Html msg
+waterCss =
+  node "link"
+    [ rel "stylesheet"
+    , href "https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css"
+    ]
+    []
 
 view : Model -> Html Msg
 view model =
   div []
-    [ div [] [ text (String.fromInt model.newId) ]
+    [ waterCss
+    , div [] [ text (String.fromInt model.newId) ]
     , button [ onClick Decrement ] [ text "-" ]
     , button [ onClick Add ] [ text "+" ]
     , input [ type_ "text", placeholder "Title", value model.newTitle, onInput Title ] []
